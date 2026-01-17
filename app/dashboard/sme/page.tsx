@@ -1,17 +1,112 @@
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Package, Truck, Clock, Plus, ArrowRight, MapPin } from "lucide-react";
+import Link from "next/link";
+
 export default function SmeDashboard() {
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-bold">Business Dashboard</h1>
-      <p>Manage your orders and track deliveries.</p>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="p-4 border rounded-lg bg-card">
-          <h2 className="font-semibold mb-2">Create Order</h2>
-          <p className="text-sm text-muted-foreground">Start a new delivery request</p>
+    <div className="flex flex-col gap-6 w-full max-w-6xl mx-auto">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Business Dashboard</h1>
+          <p className="text-muted-foreground">Manage your shipments and track deliveries.</p>
         </div>
-        <div className="p-4 border rounded-lg bg-card">
-          <h2 className="font-semibold mb-2">Active Orders</h2>
-          <p className="text-sm text-muted-foreground">Track ongoing deliveries</p>
-        </div>
+        <Button>
+          <Plus className="mr-2 h-4 w-4" /> Create New Order
+        </Button>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Active Orders</CardTitle>
+            <Clock className="h-4 w-4 text-orange-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">3</div>
+            <p className="text-xs text-muted-foreground">In transit right now</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Completed Deliveries</CardTitle>
+            <Package className="h-4 w-4 text-green-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">128</div>
+            <p className="text-xs text-muted-foreground">Lifetime total</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Spend</CardTitle>
+            <Badge variant="secondary" className="rounded-full">Monthly</Badge>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">₦45,200</div>
+            <p className="text-xs text-muted-foreground">Last 30 days</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-3">
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle>Recent Orders</CardTitle>
+            <CardDescription>Real-time status of your recent shipments.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              {[
+                { id: "#ORD-7721", item: "Textile Bundle (50kg)", dest: "Opposite Gidan Goldie, BUK Road", status: "In Transit", rider: "Aliyu B.", time: "Est. 15 mins", pod: "OTP Pending" },
+                { id: "#ORD-7720", item: "Electronics (2 Phones)", dest: "Behind Naibawa Motor Park", status: "Picked Up", rider: "Sani K.", time: "Est. 45 mins", pod: "N/A" },
+                { id: "#ORD-7719", item: "Food Package", dest: "Hotoro NNPC Quarters, Gate 3", status: "Delivered", rider: "Musa I.", time: "10:30 AM", pod: "Photo & Signature" },
+              ].map((order, i) => (
+                <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 border rounded-lg bg-card hover:bg-accent/5 transition-colors">
+                  <div className="flex gap-4">
+                    <div className="bg-primary/10 p-3 rounded-full h-fit">
+                      <Truck className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-semibold">{order.id}</h4>
+                        <Badge variant={order.status === "Delivered" ? "secondary" : "default"}>{order.status}</Badge>
+                      </div>
+                      <p className="text-sm font-medium mt-1">{order.item}</p>
+                      <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
+                        <MapPin className="h-3 w-3" /> {order.dest}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right min-w-[120px]">
+                    <p className="text-sm font-medium">{order.rider}</p>
+                    <p className="text-xs text-muted-foreground">{order.time}</p>
+                    {order.status === "Delivered" && (
+                      <p className="text-[10px] text-green-600 font-medium mt-1">POD: {order.pod}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <Button variant="link" className="w-full mt-4">
+              View All Orders <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-primary text-primary-foreground">
+          <CardHeader>
+            <CardTitle>Need Help?</CardTitle>
+            <CardDescription className="text-primary-foreground/80">Support for your deliveries.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm">Contact our support team if you have issues with a rider or delivery.</p>
+            <Button variant="secondary" className="w-full text-foreground">
+              Contact Support
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

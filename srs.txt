@@ -1,0 +1,63 @@
+SOFTWARE REQUIREMENTS SPECIFICATION (SRS)
+LIFTERICO DELIVERY APP
+
+1. Introduction
+The Lifterico Delivery App is a smart delivery tracking and management system designed to address the challenges faced by Small and Medium Enterprises (SMEs), dispatch riders, and customers in Nigeria. With the rapid growth of e-commerce, social-media-based trading, and on-demand services, efficient last-mile delivery has become essential for business sustainability and customer satisfaction. However, many delivery operations in cities such as Kano still suffer from poor addressing systems, lack of transparency, unreliable communication, delayed deliveries, and frequent disputes between senders, riders, and recipients.
+Lifterico aims to provide a transparent, secure, and efficient delivery solution by combining real-time GPS tracking, estimated time of arrival (ETA) prediction, proof of delivery, and integrated communication tools. The system is designed with local realities in mind, including low internet availability, informal addresses, and the need for trust and accountability.
+
+1.1 Purpose
+The purpose of this Software Requirements Specification (SRS) document is to clearly define the functional and non-functional requirements of the Lifterico Delivery App. This document serves as a guide for developers during implementation and as a reference for project supervisors and examiners during evaluation. It ensures that all stakeholders have a common understanding of the system’s scope, behavior, and constraints.
+
+1.2 Scope
+The scope of the Lifterico system includes:
+* User registration and authentication
+* Delivery order creation and management
+* Dispatch rider assignment
+* Real-time GPS tracking and ETA updates
+* Secure in-app communication (chat, call, SMS, WhatsApp integration)
+* Proof of delivery capture (photo, OTP, signature)
+* Notifications and alerts
+* Analytics and reporting for SMEs
+The system will primarily operate as a mobile application supported by a centralized backend infrastructure.
+2. Overall Description
+Lifterico is a mobile-first delivery management platform that connects SMEs, dispatch riders, and customers through a unified system. The application integrates third-party services such as mapping APIs, SMS gateways, and push notification services. It supports role-based access control to ensure that each user type can only access features relevant to their role.
+The system is designed to be scalable, secure, and adaptable to low-bandwidth environments commonly found in developing regions.
+
+3. User Classes and Actors
+ActorDescriptionResponsibilitiesSMEBusiness owner or staff memberCreate delivery orders, assign riders, monitor delivery status, view analyticsRiderDispatch riderAccept delivery requests, pick up items, update delivery status, complete deliveriesCustomerRecipient of goodsTrack delivery in real time, communicate with rider/SME, confirm deliveryAdminSystem administratorManage users, monitor system performance, resolve disputes
+4. Functional Requirements
+FR IDRequirementDescriptionPriorityFR1User RegistrationThe system shall allow users to register and log in securelyHighFR2Order CreationSMEs shall be able to create delivery ordersHighFR3Rider AssignmentThe system shall assign riders to delivery ordersHighFR4GPS TrackingThe system shall provide real-time tracking of ridersHighFR5ETA CalculationThe system shall calculate and update delivery ETAHighFR6CommunicationUsers shall communicate via chat, call, SMS, and WhatsAppHighFR7Proof of DeliveryThe system shall capture photo, OTP, or signature as proofHighFR8NotificationsThe system shall send delivery status notificationsMediumFR9AnalyticsThe system shall generate delivery performance reportsMedium
+5. Non-Functional Requirements
+* Performance: Location updates should occur within acceptable time intervals.
+* Security: User data must be encrypted and protected.
+* Usability: The interface should be simple and intuitive.
+* Scalability: The system should support growth in users and deliveries.
+* Availability: The system should be accessible most of the time with minimal downtime.
+6. Constraints
+ConstraintDescriptionInternet ConnectivitySystem must function under unstable network conditionsDevice LimitationsMust support low-end Android devicesRegulatoryMust comply with Nigerian ICT and data protection lawsPROJECT PROPOSAL
+Design and Implementation of Lifterico: A Smart Delivery Tracking System
+1. Introduction
+Small and Medium Enterprises (SMEs) play a vital role in Nigeria’s economic development by providing employment opportunities and supporting local commerce. Despite their importance, many SMEs face serious logistics challenges, particularly in last-mile delivery. Inefficient delivery systems result in delays, customer dissatisfaction, loss of trust, and reduced business growth.
+2. Background of the Study
+With the increasing use of mobile technology and online marketplaces, customers now expect fast, transparent, and reliable delivery services. However, many existing delivery solutions in Nigeria lack real-time tracking, effective communication, and accountability mechanisms. This gap creates an opportunity for a system like Lifterico.
+3. Problem Statement
+In cities such as Kano, SMEs and customers frequently experience delayed deliveries, lack of real-time delivery visibility, poor rider-customer communication, and delivery disputes. These issues reduce customer confidence and negatively impact business operations.
+4. Aim and Objectives
+Aim:
+To design and implement a smart delivery tracking system that improves transparency and efficiency in delivery operations.
+Objectives:
+* To provide real-time delivery tracking
+* To enable secure communication between stakeholders
+* To improve dispatch rider efficiency
+* To support SMEs with analytics and reporting
+5. Significance of the Study
+The implementation of Lifterico will help SMEs manage deliveries more effectively, improve customer trust, reduce disputes, and promote digital transformation in local logistics operations.
+6. Scope of the Project
+The project focuses on the design and development of a mobile-based delivery management system that includes order creation, tracking, communication, proof of delivery, and reporting.
+7. Methodology
+An Agile software development methodology will be adopted. The project will follow iterative phases including requirement analysis, system design, implementation, testing, and evaluation.
+8. Expected Outcome
+The expected outcome is a scalable, secure, and user-friendly delivery platform capable of supporting SMEs, dispatch riders, and customers in Nigerian cities.
+9. Conclusion
+Lifterico aims to modernize last-mile delivery by leveraging technology to provide transparency, trust, and efficiency. The system has the potential to significantly improve logistics operations for SMEs and enhance customer satisfaction.
+
