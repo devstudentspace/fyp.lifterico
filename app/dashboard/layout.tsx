@@ -18,7 +18,11 @@ export default function ProtectedLayout({
         <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
           <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
             <div className="flex gap-5 items-center font-semibold text-xl">
-              <Link href={"/"}>Lifterico</Link>
+              <Link href={"/dashboard"}>Lifterico</Link>
+              <nav className="flex items-center gap-4 ml-4 text-sm font-medium text-muted-foreground">
+                <Link href="/dashboard" className="hover:text-primary transition-colors">Dashboard</Link>
+                <Link href="/dashboard/settings" className="hover:text-primary transition-colors">Settings</Link>
+              </nav>
             </div>
             {!hasEnvVars ? (
               <EnvVarWarning />

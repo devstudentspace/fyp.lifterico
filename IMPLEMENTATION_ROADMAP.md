@@ -20,11 +20,12 @@ This document outlines the phase-by-phase and sprint-by-sprint implementation pl
 ### Sprint 2: Profiles & Business Verification
 *   **Goal:** Establish trust and identity for businesses and riders.
 *   **Tasks:**
-    *   [ ] **Database:** Finalize `profiles`, `sme_profiles`, `logistics_profiles` schemas.
-    *   [ ] **UI/UX:** Create "Complete Profile" forms for SMEs and Logistics companies.
-    *   [ ] **Storage:** Implement file upload for business registration documents (CAC, etc.).
-    *   [ ] **Admin:** Build the "Business Verification" view in Admin Dashboard to approve/reject profiles.
-    *   [ ] **Logic:** Restrict order creation/acceptance to verified accounts only.
+    *   [x] **Database:** Finalize `profiles`, `sme_profiles`, `logistics_profiles` schemas.
+    [x] **UI/UX:** Create "Complete Profile" forms for SMEs and Logistics companies.
+    [x] **Logic:** Implement Profile Completion Score (70% threshold gate).
+    [x] **Storage:** Implement file upload for business registration documents (CAC, etc.).
+    [x] **Admin:** Build the "Business Verification" view in Admin Dashboard to approve/reject profiles.
+    [x] **Logic:** Restrict order creation/acceptance to verified accounts only.
 
 ### Sprint 3: Order Management Core
 *   **Goal:** The heart of the system—creating and moving orders.

@@ -1,16 +1,44 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Package, Truck, Clock, Plus, ArrowRight, MapPin } from "lucide-react";
+import { Package, Truck, Clock, Plus, ArrowRight, MapPin, Loader2 } from "lucide-react";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import { calculateProfileCompletion } from "@/lib/profile-utils";
+import { ProfileCompletionGate } from "@/components/profile-completion-gate";
+import { VerificationGate } from "@/components/verification-gate";
+import { Suspense } from "react";
 
-export default function SmeDashboard() {
+async function SmeContent() {
+  const supabase = await createClient();
+  
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/auth/login");
+
+  const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single();
+  const { data: smeProfile } = await supabase.from("sme_profiles").select("*").eq("id", user.id).single();
+
+  const completionPercentage = calculateProfileCompletion('sme', profile, smeProfile);
+
+  if (completionPercentage < 70) {
+    return <ProfileCompletionGate percentage={completionPercentage} />;
+  }
+
+  // Verification Gate
+  if (smeProfile?.verification_status !== 'verified') {
+    return <VerificationGate status={smeProfile?.verification_status || 'unverified'} />;
+  }
+
+  const businessName = smeProfile?.business_name || "My Business";
+  const fullName = profile?.full_name || user.email;
+
   return (
     <div className="flex flex-col gap-6 w-full max-w-6xl mx-auto">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Business Dashboard</h1>
-          <p className="text-muted-foreground">Manage your shipments and track deliveries.</p>
+          <h1 className="text-3xl font-bold tracking-tight">{businessName}</h1>
+          <p className="text-muted-foreground">Welcome back, {fullName}. Manage your shipments here.</p>
         </div>
         <Button>
           <Plus className="mr-2 h-4 w-4" /> Create New Order
@@ -109,5 +137,13 @@ export default function SmeDashboard() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function SmeDashboard() {
+  return (
+    <Suspense fallback={<div className="flex justify-center p-12"><Loader2 className="animate-spin h-8 w-8 text-primary" /></div>}>
+      <SmeContent />
+    </Suspense>
   );
 }
