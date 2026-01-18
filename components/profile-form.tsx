@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
+import { AlertCircle, CheckCircle2, Loader2, LayoutDashboard } from "lucide-react";
 import { DocumentUpload } from "@/components/document-upload";
+import Link from "next/link";
 
 interface ProfileFormProps {
   user: any;
@@ -243,9 +244,18 @@ export function ProfileForm({ user, role }: ProfileFormProps) {
       )}
 
       {message && (
-        <div className={`p-4 rounded-lg flex items-center gap-3 ${message.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
-          {message.type === 'success' ? <CheckCircle2 className="h-5 w-5" /> : <AlertCircle className="h-5 w-5" />}
-          <p className="text-sm font-medium">{message.text}</p>
+        <div className={`p-4 rounded-lg flex flex-col gap-4 ${message.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'}`}>
+          <div className="flex items-center gap-3">
+            {message.type === 'success' ? <CheckCircle2 className="h-5 w-5" /> : <AlertCircle className="h-5 w-5" />}
+            <p className="text-sm font-medium">{message.text}</p>
+          </div>
+          {message.type === 'success' && (
+            <Button asChild variant="outline" className="w-full bg-white border-green-200 text-green-700 hover:bg-green-100">
+              <Link href="/dashboard">
+                <LayoutDashboard className="mr-2 h-4 w-4" /> Go to Dashboard
+              </Link>
+            </Button>
+          )}
         </div>
       )}
 

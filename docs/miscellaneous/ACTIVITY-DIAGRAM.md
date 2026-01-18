@@ -177,24 +177,32 @@ flowchart TD
 ```mermaid
 flowchart TD
     A([Start]) --> B[Business Registers]
-    B --> C[Upload Documents]
-    C --> D[Submit for Verification]
-    D --> E[Status: Pending]
-    E --> F[Admin Notified]
-    F --> G[Admin Reviews Documents]
-    G --> H{Documents Valid?}
-    H -->|No| I{Fixable?}
-    I -->|Yes| J[Request Re-upload]
-    J --> K[Notify Business]
-    K --> C
-    I -->|No| L[Reject Business]
-    L --> M[Send Rejection Reason]
-    M --> N([End - Rejected])
-    H -->|Yes| O[Approve Business]
-    O --> P[Status: Verified]
-    P --> Q[Notify Business Owner]
-    Q --> R[Enable Full Features]
-    R --> S([End - Verified])
+    B --> C[Access Restricted Dashboard]
+    C --> D{Profile Complete?}
+    D -->|No (< 70%)| E[Show 'Complete Profile' Prompt]
+    E --> F[User Updates Profile]
+    F --> D
+    D -->|Yes| G{Documents Uploaded?}
+    G -->|No| H[Show 'Upload Documents' Prompt]
+    H --> I[User Uploads Documents]
+    I --> J[Submit for Verification]
+    J --> K[Status: Pending]
+    K --> L[Show 'Verification In Progress' Status]
+    L --> M[Admin Notified]
+    M --> N[Admin Reviews Documents]
+    N --> O{Documents Valid?}
+    O -->|No| P{Fixable?}
+    P -->|Yes| Q[Request Re-upload]
+    Q --> R[Notify Business]
+    R --> H
+    P -->|No| S[Reject Business]
+    S --> T[Send Rejection Reason]
+    T --> U([End - Rejected])
+    O -->|Yes| V[Approve Business]
+    V --> W[Status: Verified]
+    W --> X[Notify Business Owner]
+    X --> Y[Enable Full Features]
+    Y --> Z([End - Verified])
 ```
 
 ---

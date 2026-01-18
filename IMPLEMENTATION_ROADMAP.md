@@ -25,7 +25,7 @@ This document outlines the phase-by-phase and sprint-by-sprint implementation pl
     [x] **Logic:** Implement Profile Completion Score (70% threshold gate).
     [x] **Storage:** Implement file upload for business registration documents (CAC, etc.).
     [x] **Admin:** Build the "Business Verification" view in Admin Dashboard to approve/reject profiles.
-    [ ] **Logic:** Restrict order creation/acceptance to verified accounts only.
+    [x] **Logic:** Restrict order creation/acceptance to verified accounts only.
 
 ### Sprint 3: Order Management Core
 *   **Goal:** The heart of the system—creating and moving orders.

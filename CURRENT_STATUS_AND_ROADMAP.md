@@ -11,9 +11,9 @@ The project is currently in **Sprint 2 (Profiles & Business Verification)** of P
 *   **Dashboards:** Role-specific dashboards now fetch real user/business data from Supabase.
 *   **Security:** RBAC Middleware enforces role-specific route access.
 
-#### Sprint 2: Profiles & Business Verification (In Progress)
+#### Sprint 2: Profiles & Business Verification (Completed)
 *   **Goal:** Establish trust and identity.
-*   **Status:** 🏗️ **90% COMPLETE**
+*   **Status:** ✅ **DONE**
 *   **Deliverables:**
     *   [x] API/DB integration for profile data.
     *   [x] "Edit Profile" forms for all roles.
@@ -49,7 +49,7 @@ This roadmap compares the current state with the requirements and outlines the r
     *   [ ] **Admin:** Real "Upgrade Requests" logic in Admin dashboard.
 *   **Success Metric:** Users see their actual name/details on dashboards; Admins can approve a request in DB.
 
-#### Sprint 3: Order Management Core
+#### Sprint 3: Order Management Core (Next Up)
 *   **Goal:** The heart of the system—creating and moving orders.
 *   **Expected Outcome:** SMEs can create orders that Logistics companies can see.
 *   **Key Tasks:**

@@ -27,7 +27,7 @@ export function VerificationGate({ status }: VerificationGateProps) {
           <CardDescription className="text-orange-700/80 dark:text-orange-400/80 text-base max-w-md mx-auto">
             {status === 'pending' 
               ? "Your documents have been submitted and are currently under review by our admin team. You will be notified once approved."
-              : "To ensure platform safety, your business must be verified before you can access these features. Please upload your registration documents."
+              : "Your account is created but requires verification. To access the system services, please complete the verification process by uploading your business documents."
             }
           </CardDescription>
         </CardHeader>
@@ -35,7 +35,7 @@ export function VerificationGate({ status }: VerificationGateProps) {
           {status !== 'pending' && (
             <Button asChild size="lg" className="bg-orange-600 hover:bg-orange-700 text-white border-none shadow-lg">
               <Link href="/dashboard/settings">
-                Upload Documents <ArrowRight className="ml-2 h-5 w-5" />
+                Complete Verification <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
           )}

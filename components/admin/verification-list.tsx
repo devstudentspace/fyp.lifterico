@@ -1,11 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { FileText, CheckCircle, XCircle, Loader2, ExternalLink } from "lucide-react";
+import { FileText, ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 interface VerificationRequest {
   id: string;
@@ -21,35 +20,7 @@ interface VerificationListProps {
   requests: VerificationRequest[];
 }
 
-export function VerificationList({ requests: initialRequests }: VerificationListProps) {
-  const [requests, setRequests] = useState(initialRequests);
-  const [processing, setProcessing] = useState<string | null>(null);
-  const supabase = createClient();
-
-  const handleReview = async (id: string, role: string, status: 'verified' | 'rejected') => {
-    setProcessing(id);
-    try {
-      let table = 'sme_profiles';
-      if (role === 'logistics') table = 'logistics_profiles';
-      if (role === 'rider') table = 'rider_profiles';
-
-      const { error } = await supabase
-        .from(table)
-        .update({ verification_status: status })
-        .eq('id', id);
-
-      if (error) throw error;
-
-      // Optimistic update
-      setRequests(prev => prev.filter(req => req.id !== id));
-
-    } catch (error) {
-      console.error("Failed to update status:", error);
-    } finally {
-      setProcessing(null);
-    }
-  };
-
+export function VerificationList({ requests }: VerificationListProps) {
   if (requests.length === 0) {
     return (
       <div className="text-center py-12 bg-muted/30 rounded-lg border border-dashed">
@@ -78,18 +49,17 @@ export function VerificationList({ requests: initialRequests }: VerificationList
               <p className="text-sm font-medium mb-2">Submitted Documents:</p>
               {req.documents && req.documents.length > 0 ? (
                 <div className="space-y-2">
-                  {req.documents.map((doc: any, i: number) => (
-                    <div key={i} className="flex items-center justify-between text-sm p-2 bg-muted rounded border">
-                      <div className="flex items-center gap-2 overflow-hidden">
-                        <FileText className="h-4 w-4 shrink-0 text-primary" />
-                        <span className="truncate">{doc.name}</span>
-                      </div>
-                      {/* In a real app, you'd generate a signed URL here */}
-                      <Button variant="ghost" size="icon" className="h-6 w-6" disabled title="View (Mock)">
-                        <ExternalLink className="h-3 w-3" />
-                      </Button>
+                  {req.documents.slice(0, 3).map((doc: any, i: number) => (
+                    <div key={i} className="flex items-center gap-2 text-sm p-2 bg-muted rounded border overflow-hidden">
+                      <FileText className="h-4 w-4 shrink-0 text-primary" />
+                      <span className="truncate">{doc.name}</span>
                     </div>
                   ))}
+                  {req.documents.length > 3 && (
+                    <p className="text-xs text-muted-foreground pl-1">
+                      +{req.documents.length - 3} more
+                    </p>
+                  )}
                 </div>
               ) : (
                 <p className="text-sm text-muted-foreground italic">No documents uploaded.</p>
@@ -99,21 +69,12 @@ export function VerificationList({ requests: initialRequests }: VerificationList
               Submitted: {new Date(req.submitted_at).toLocaleDateString()}
             </p>
           </CardContent>
-          <CardFooter className="flex gap-2 pt-4 border-t">
-            <Button 
-              className="w-full bg-green-600 hover:bg-green-700" 
-              onClick={() => handleReview(req.id, req.role, 'verified')}
-              disabled={!!processing}
-            >
-              {processing === req.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <><CheckCircle className="mr-2 h-4 w-4" /> Approve</>}
-            </Button>
-            <Button 
-              variant="outline" 
-              className="w-full text-red-600 hover:bg-red-50 border-red-200"
-              onClick={() => handleReview(req.id, req.role, 'rejected')}
-              disabled={!!processing}
-            >
-              <XCircle className="mr-2 h-4 w-4" /> Reject
+          <CardFooter className="pt-4 border-t">
+            <Button asChild className="w-full">
+              <Link href={`/dashboard/admin/verifications/${req.id}?role=${req.role}`}>
+                Review Application
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
             </Button>
           </CardFooter>
         </Card>
