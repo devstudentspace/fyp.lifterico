@@ -1,31 +1,43 @@
-"use client";
-
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { MapPin, Navigation, DollarSign, Clock, CheckCircle, Camera, Key } from "lucide-react";
-import { useState } from "react";
+import { MapPin, Navigation, DollarSign, Clock, CheckCircle, Camera, Key, Loader2 } from "lucide-react";
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import { calculateProfileCompletion } from "@/lib/profile-utils";
+import { ProfileCompletionGate } from "@/components/profile-completion-gate";
+import { RiderStatusToggle } from "./rider-status-toggle";
+import { Suspense } from "react";
 
-export default function RiderDashboard() {
-  const [isOnline, setIsOnline] = useState(false);
+async function RiderContent() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/auth/login");
+
+  const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single();
+  const { data: riderProfile } = await supabase.from("rider_profiles").select("*").eq("id", user.id).single();
+
+  const completionPercentage = calculateProfileCompletion('rider', profile, riderProfile);
+
+  if (completionPercentage < 70) {
+    return <ProfileCompletionGate percentage={completionPercentage} />;
+  }
+
+  const isOnline = riderProfile?.current_status === 'online';
 
   return (
     <div className="flex flex-col gap-6 w-full max-w-lg mx-auto pb-20">
       <div className="flex justify-between items-center bg-card p-4 rounded-xl border shadow-sm">
         <div>
-           <h1 className="text-xl font-bold">Rider Status</h1>
+           <h1 className="text-xl font-bold">{profile?.full_name || "Rider"}</h1>
            <div className="flex items-center gap-2">
-             <p className="text-sm text-muted-foreground">{isOnline ? "You are online & visible" : "You are offline"}</p>
-             <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></span>
-             <span className="text-[10px] text-muted-foreground">Synced</span>
+             <p className="text-sm text-muted-foreground">{riderProfile?.vehicle_type || "No vehicle"} • {riderProfile?.license_plate || "No plate"}</p>
+             <span className={`h-1.5 w-1.5 rounded-full ${isOnline ? 'bg-green-500 animate-pulse' : 'bg-slate-300'}`}></span>
            </div>
         </div>
         <div className="flex items-center gap-2">
-            <span className={`text-sm font-medium ${isOnline ? "text-green-600" : "text-muted-foreground"}`}>
-                {isOnline ? "Online" : "Offline"}
-            </span>
-            <Switch checked={isOnline} onCheckedChange={setIsOnline} />
+            <RiderStatusToggle initialStatus={isOnline} />
         </div>
       </div>
 
@@ -116,5 +128,13 @@ export default function RiderDashboard() {
         ))}
       </div>
     </div>
+  );
+}
+
+export default function RiderDashboard() {
+  return (
+    <Suspense fallback={<div className="flex justify-center p-12"><Loader2 className="animate-spin h-8 w-8 text-primary" /></div>}>
+      <RiderContent />
+    </Suspense>
   );
 }

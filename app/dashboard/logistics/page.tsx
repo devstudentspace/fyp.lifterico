@@ -1,15 +1,43 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Users, Wallet, TrendingUp, Bike, MapPin, CheckCircle } from "lucide-react";
+import { Users, Wallet, TrendingUp, Bike, MapPin, CheckCircle, Loader2 } from "lucide-react";
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import { calculateProfileCompletion } from "@/lib/profile-utils";
+import { ProfileCompletionGate } from "@/components/profile-completion-gate";
+import { VerificationGate } from "@/components/verification-gate";
+import { Suspense } from "react";
 
-export default function LogisticsDashboard() {
+async function LogisticsContent() {
+  const supabase = await createClient();
+  
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/auth/login");
+
+  const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single();
+  const { data: logisticsProfile } = await supabase.from("logistics_profiles").select("*").eq("id", user.id).single();
+
+  const completionPercentage = calculateProfileCompletion('logistics', profile, logisticsProfile);
+
+  if (completionPercentage < 70) {
+    return <ProfileCompletionGate percentage={completionPercentage} />;
+  }
+
+  // Verification Gate
+  if (logisticsProfile?.verification_status !== 'verified') {
+    return <VerificationGate status={logisticsProfile?.verification_status || 'unverified'} />;
+  }
+
+  const companyName = logisticsProfile?.company_name || "Logistics Company";
+  const fleetSize = logisticsProfile?.fleet_size || 0;
+
   return (
     <div className="flex flex-col gap-6 w-full max-w-6xl mx-auto">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Logistics Overview</h1>
-          <p className="text-muted-foreground">Fleet management and performance metrics.</p>
+          <h1 className="text-3xl font-bold tracking-tight">{companyName}</h1>
+          <p className="text-muted-foreground">Fleet management for {profile?.full_name || user.email}.</p>
         </div>
         <Button variant="outline">Manage Fleet</Button>
       </div>
@@ -21,10 +49,10 @@ export default function LogisticsDashboard() {
             <Bike className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">8/12</div>
+            <div className="text-2xl font-bold">0/{fleetSize}</div>
             <div className="flex items-center gap-2 mt-1">
-               <span className="h-2 w-2 rounded-full bg-green-500"></span>
-               <p className="text-xs text-muted-foreground">Online now</p>
+               <span className="h-2 w-2 rounded-full bg-slate-300"></span>
+               <p className="text-xs text-muted-foreground">No riders online</p>
             </div>
           </CardContent>
         </Card>
@@ -54,7 +82,7 @@ export default function LogisticsDashboard() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">12</div>
+            <div className="text-2xl font-bold">{fleetSize}</div>
             <p className="text-xs text-muted-foreground">Registered riders</p>
           </CardContent>
         </Card>
@@ -148,5 +176,13 @@ export default function LogisticsDashboard() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function LogisticsDashboard() {
+  return (
+    <Suspense fallback={<div className="flex justify-center p-12"><Loader2 className="animate-spin h-8 w-8 text-primary" /></div>}>
+      <LogisticsContent />
+    </Suspense>
   );
 }

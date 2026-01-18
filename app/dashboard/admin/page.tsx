@@ -1,9 +1,57 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Users, Package, AlertCircle, TrendingUp, Activity } from "lucide-react";
+import { Users, Package, AlertCircle, TrendingUp, Activity, CheckCircle2, Loader2 } from "lucide-react";
+import { createClient } from "@/lib/supabase/server";
+import { VerificationList } from "@/components/admin/verification-list";
+import { Suspense } from "react";
 
-export default function AdminDashboard() {
+async function getPendingVerifications() {
+  const supabase = await createClient();
+  const requests = [];
+
+  // Fetch pending SMEs
+  const { data: smes } = await supabase
+    .from('sme_profiles')
+    .select('id, business_name, documents, created_at')
+    .eq('verification_status', 'pending');
+  
+  if (smes) {
+    requests.push(...smes.map(s => ({
+      id: s.id,
+      user_id: s.id,
+      name: s.business_name || "Unknown SME",
+      role: 'sme',
+      status: 'pending',
+      documents: s.documents || [],
+      submitted_at: s.created_at
+    })));
+  }
+
+  // Fetch pending Logistics
+  const { data: logistics } = await supabase
+    .from('logistics_profiles')
+    .select('id, company_name, documents, created_at')
+    .eq('verification_status', 'pending');
+
+  if (logistics) {
+    requests.push(...logistics.map(l => ({
+      id: l.id,
+      user_id: l.id,
+      name: l.company_name || "Unknown Company",
+      role: 'logistics',
+      status: 'pending',
+      documents: l.documents || [],
+      submitted_at: l.created_at
+    })));
+  }
+
+  return requests;
+}
+
+async function AdminContent() {
+  const pendingRequests = await getPendingVerifications();
+
   return (
     <div className="flex flex-col gap-6 w-full max-w-7xl mx-auto">
       <div className="flex justify-between items-center">
@@ -14,6 +62,16 @@ export default function AdminDashboard() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Pending Verifications</CardTitle>
+            <CheckCircle2 className="h-4 w-4 text-orange-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{pendingRequests.length}</div>
+            <p className="text-xs text-muted-foreground">Awaiting review</p>
+          </CardContent>
+        </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Users</CardTitle>
@@ -44,16 +102,11 @@ export default function AdminDashboard() {
             <p className="text-xs text-muted-foreground">Requires attention</p>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">₦1.2M</div>
-            <p className="text-xs text-muted-foreground">+18% from last month</p>
-          </CardContent>
-        </Card>
+      </div>
+
+      <div className="space-y-4">
+        <h2 className="text-xl font-bold tracking-tight">Business Verification Requests</h2>
+        <VerificationList requests={pendingRequests} />
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
@@ -89,36 +142,6 @@ export default function AdminDashboard() {
         
         <Card className="col-span-3">
           <CardHeader>
-            <CardTitle>SME Upgrade Requests</CardTitle>
-            <p className="text-xs text-muted-foreground">SMEs requesting Logistics tier.</p>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-               {[
-                 { name: "Sani & Sons", orders: 62, age: "5 months", docs: "Uploaded" },
-                 { name: "Kano Gizmos", orders: 48, age: "3 months", docs: "Pending" },
-               ].map((req, i) => (
-                 <div key={i} className="flex flex-col gap-2 p-3 border rounded-lg bg-muted/30">
-                    <div className="flex justify-between items-center">
-                      <span className="font-bold text-sm">{req.name}</span>
-                      <Badge variant={req.orders >= 50 ? "default" : "secondary"}>{req.orders} Orders</Badge>
-                    </div>
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>Age: {req.age}</span>
-                      <span>Docs: {req.docs}</span>
-                    </div>
-                    <div className="flex gap-2 mt-1">
-                      <Button size="sm" className="w-full h-7 text-[10px]" disabled={req.orders < 50}>Approve</Button>
-                      <Button size="sm" variant="outline" className="w-full h-7 text-[10px]">Review</Button>
-                    </div>
-                 </div>
-               ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="col-span-4">
-          <CardHeader>
             <CardTitle>System Activity</CardTitle>
           </CardHeader>
           <CardContent>
@@ -143,5 +166,13 @@ export default function AdminDashboard() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function AdminDashboard() {
+  return (
+    <Suspense fallback={<div className="flex justify-center p-12"><Loader2 className="animate-spin h-8 w-8 text-primary" /></div>}>
+      <AdminContent />
+    </Suspense>
   );
 }
