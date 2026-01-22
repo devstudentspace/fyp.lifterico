@@ -43,8 +43,10 @@ async function SmeContent() {
           <h1 className="text-3xl font-bold tracking-tight">{businessName}</h1>
           <p className="text-muted-foreground">Welcome back, {fullName}. Manage your shipments here.</p>
         </div>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" /> Create New Order
+        <Button asChild>
+          <Link href="/dashboard/sme/orders/create">
+            <Plus className="mr-2 h-4 w-4" /> Create New Order
+          </Link>
         </Button>
       </div>
 
@@ -120,8 +122,10 @@ async function SmeContent() {
                 </div>
               ))}
             </div>
-            <Button variant="link" className="w-full mt-4">
-              View All Orders <ArrowRight className="ml-2 h-4 w-4" />
+            <Button variant="link" className="w-full mt-4" asChild>
+              <Link href="/dashboard/sme/orders">
+                View All Orders <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
             </Button>
           </CardContent>
         </Card>

@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Users, Wallet, TrendingUp, Bike, MapPin, CheckCircle, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { calculateProfileCompletion } from "@/lib/profile-utils";
 import { ProfileCompletionGate } from "@/components/profile-completion-gate";
 import { VerificationGate } from "@/components/verification-gate";
@@ -42,7 +43,14 @@ async function LogisticsContent() {
           <h1 className="text-3xl font-bold tracking-tight">{companyName}</h1>
           <p className="text-muted-foreground">Fleet management for {profile?.full_name || user.email}.</p>
         </div>
-        <Button variant="outline">Manage Fleet</Button>
+        <div className="flex gap-2">
+          <Button asChild>
+            <Link href="/dashboard/logistics/orders/available">
+              Find Orders
+            </Link>
+          </Button>
+          <Button variant="outline">Manage Fleet</Button>
+        </div>
       </div>
 
       <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">

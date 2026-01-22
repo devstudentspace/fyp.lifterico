@@ -29,9 +29,27 @@ export function ProfileForm({ user, role }: ProfileFormProps) {
   const [documents, setDocuments] = useState<any[]>([]);
 
   // Role Specific State
-  const [smeData, setSmeData] = useState({ business_name: "", business_address: "", industry_type: "" });
-  const [logisticsData, setLogisticsData] = useState({ company_name: "", registration_number: "", fleet_size: 0 });
-  const [riderData, setRiderData] = useState({ vehicle_type: "", license_plate: "" });
+  const [smeData, setSmeData] = useState({ 
+    business_name: "", 
+    business_address: "", 
+    city: "",
+    state: "",
+    industry_type: "" 
+  });
+  
+  const [logisticsData, setLogisticsData] = useState({ 
+    company_name: "", 
+    address: "",
+    city: "",
+    state: "",
+    registration_number: "", 
+    fleet_size: 0 
+  });
+  
+  const [riderData, setRiderData] = useState({ 
+    vehicle_type: "", 
+    license_plate: "" 
+  });
   
   const [verificationStatus, setVerificationStatus] = useState<string>("");
 
@@ -59,6 +77,8 @@ export function ProfileForm({ user, role }: ProfileFormProps) {
             setSmeData({ 
               business_name: data.business_name || "", 
               business_address: data.business_address || "", 
+              city: data.city || "",
+              state: data.state || "",
               industry_type: data.industry_type || "" 
             });
             setDocuments(data.documents || []);
@@ -69,6 +89,9 @@ export function ProfileForm({ user, role }: ProfileFormProps) {
           if (data) {
             setLogisticsData({ 
               company_name: data.company_name || "", 
+              address: data.address || "",
+              city: data.city || "",
+              state: data.state || "",
               registration_number: data.registration_number || "", 
               fleet_size: data.fleet_size || 0 
             });
@@ -190,6 +213,16 @@ export function ProfileForm({ user, role }: ProfileFormProps) {
               <Label htmlFor="bizAddr">Business Address</Label>
               <Input id="bizAddr" value={smeData.business_address} onChange={(e) => setSmeData({...smeData, business_address: e.target.value})} />
             </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="smeCity">City</Label>
+                <Input id="smeCity" value={smeData.city} onChange={(e) => setSmeData({...smeData, city: e.target.value})} />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="smeState">State</Label>
+                <Input id="smeState" value={smeData.state} onChange={(e) => setSmeData({...smeData, state: e.target.value})} />
+              </div>
+            </div>
             <div className="grid gap-2">
               <Label htmlFor="industry">Industry Type</Label>
               <Input id="industry" value={smeData.industry_type} onChange={(e) => setSmeData({...smeData, industry_type: e.target.value})} placeholder="e.g. Fashion, Electronics" />
@@ -218,6 +251,20 @@ export function ProfileForm({ user, role }: ProfileFormProps) {
             <div className="grid gap-2">
               <Label htmlFor="compName">Company Name</Label>
               <Input id="compName" value={logisticsData.company_name} onChange={(e) => setLogisticsData({...logisticsData, company_name: e.target.value})} />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="logAddr">Company Address</Label>
+              <Input id="logAddr" value={logisticsData.address} onChange={(e) => setLogisticsData({...logisticsData, address: e.target.value})} />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="logCity">City</Label>
+                <Input id="logCity" value={logisticsData.city} onChange={(e) => setLogisticsData({...logisticsData, city: e.target.value})} />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="logState">State</Label>
+                <Input id="logState" value={logisticsData.state} onChange={(e) => setLogisticsData({...logisticsData, state: e.target.value})} />
+              </div>
             </div>
             <div className="grid gap-2">
               <Label htmlFor="regNum">Registration Number (RC)</Label>
