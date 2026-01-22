@@ -9,6 +9,7 @@ import { calculateProfileCompletion } from "@/lib/profile-utils";
 import { ProfileCompletionGate } from "@/components/profile-completion-gate";
 import { VerificationGate } from "@/components/verification-gate";
 import { Suspense } from "react";
+import { QuickLinks } from "@/components/dashboard/quick-links";
 
 async function SmeContent() {
   const supabase = await createClient();
@@ -25,7 +26,6 @@ async function SmeContent() {
     return <ProfileCompletionGate percentage={completionPercentage} />;
   }
 
-  // Verification Gate
   if (smeProfile?.verification_status !== 'verified') {
     return <VerificationGate 
       status={smeProfile?.verification_status || 'unverified'} 
@@ -36,6 +36,38 @@ async function SmeContent() {
   const businessName = smeProfile?.business_name || "My Business";
   const fullName = profile?.full_name || user.email;
 
+  // --- Real Data Fetching ---
+  const { count: activeCount } = await supabase
+    .from('orders')
+    .select('*', { count: 'exact', head: true })
+    .eq('sme_id', user.id)
+    .in('status', ['accepted', 'assigned', 'picked_up', 'in_transit']);
+
+  const { count: completedCount } = await supabase
+    .from('orders')
+    .select('*', { count: 'exact', head: true })
+    .eq('sme_id', user.id)
+    .eq('status', 'delivered');
+
+  const { data: completedOrders } = await supabase
+    .from('orders')
+    .select('delivery_fee')
+    .eq('sme_id', user.id)
+    .eq('status', 'delivered');
+  
+  const totalSpend = completedOrders?.reduce((sum, o) => sum + (o.delivery_fee || 0), 0) || 0;
+
+  const { data: recentOrders } = await supabase
+    .from('orders')
+    .select(`
+      id, order_number, status, package_description, delivery_address, created_at, estimated_duration_mins,
+      rider:rider_id(id, profiles(full_name)),
+      logistics:business_id(id, company_name)
+    `)
+    .eq('sme_id', user.id)
+    .order('created_at', { ascending: false })
+    .limit(5);
+
   return (
     <div className="flex flex-col gap-6 w-full max-w-6xl mx-auto">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -43,10 +75,14 @@ async function SmeContent() {
           <h1 className="text-3xl font-bold tracking-tight">{businessName}</h1>
           <p className="text-muted-foreground">Welcome back, {fullName}. Manage your shipments here.</p>
         </div>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" /> Create New Order
+        <Button asChild>
+          <Link href="/dashboard/sme/orders/create">
+            <Plus className="mr-2 h-4 w-4" /> Create New Order
+          </Link>
         </Button>
       </div>
+
+      <QuickLinks role="sme" />
 
       <div className="grid gap-4 grid-cols-2 md:grid-cols-3">
         <Card>
@@ -55,8 +91,8 @@ async function SmeContent() {
             <Clock className="h-4 w-4 text-orange-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">3</div>
-            <p className="text-xs text-muted-foreground">In transit right now</p>
+            <div className="text-2xl font-bold">{activeCount || 0}</div>
+            <p className="text-xs text-muted-foreground">In transit or assigned</p>
           </CardContent>
         </Card>
         <Card>
@@ -65,18 +101,18 @@ async function SmeContent() {
             <Package className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">128</div>
+            <div className="text-2xl font-bold">{completedCount || 0}</div>
             <p className="text-xs text-muted-foreground">Lifetime total</p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Spend</CardTitle>
-            <Badge variant="secondary" className="rounded-full">Monthly</Badge>
+            <Badge variant="secondary" className="rounded-full">Lifetime</Badge>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₦45,200</div>
-            <p className="text-xs text-muted-foreground">Last 30 days</p>
+            <div className="text-2xl font-bold">₦{totalSpend.toLocaleString()}</div>
+            <p className="text-xs text-muted-foreground">Delivery fees paid</p>
           </CardContent>
         </Card>
       </div>
@@ -89,39 +125,48 @@ async function SmeContent() {
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
-              {[
-                { id: "#ORD-7721", item: "Textile Bundle (50kg)", dest: "Opposite Gidan Goldie, BUK Road", status: "In Transit", rider: "Aliyu B.", time: "Est. 15 mins", pod: "OTP Pending" },
-                { id: "#ORD-7720", item: "Electronics (2 Phones)", dest: "Behind Naibawa Motor Park", status: "Picked Up", rider: "Sani K.", time: "Est. 45 mins", pod: "N/A" },
-                { id: "#ORD-7719", item: "Food Package", dest: "Hotoro NNPC Quarters, Gate 3", status: "Delivered", rider: "Musa I.", time: "10:30 AM", pod: "Photo & Signature" },
-              ].map((order, i) => (
-                <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 border rounded-lg bg-card hover:bg-accent/5 transition-colors">
-                  <div className="flex gap-4">
-                    <div className="bg-primary/10 p-3 rounded-full h-fit">
-                      <Truck className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-semibold">{order.id}</h4>
-                        <Badge variant={order.status === "Delivered" ? "secondary" : "default"}>{order.status}</Badge>
+              {(!recentOrders || recentOrders.length === 0) ? (
+                <p className="text-muted-foreground text-sm text-center py-8">No recent orders found.</p>
+              ) : (
+                recentOrders.map((order, i) => {
+                  // Determine who is handling it
+                  // @ts-ignore
+                  const handlerName = order.rider?.profiles?.full_name || order.logistics?.company_name || "Pending Assignment";
+                  
+                  return (
+                    <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 border rounded-lg bg-card hover:bg-accent/5 transition-colors">
+                      <div className="flex gap-4">
+                        <div className="bg-primary/10 p-3 rounded-full h-fit">
+                          <Truck className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-semibold">{order.order_number}</h4>
+                            <Badge variant={order.status === "delivered" ? "secondary" : "default"}>
+                                {order.status.replace('_', ' ').toUpperCase()}
+                            </Badge>
+                          </div>
+                          <p className="text-sm font-medium mt-1">{order.package_description}</p>
+                          <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
+                            <MapPin className="h-3 w-3" /> {order.delivery_address}
+                          </div>
+                        </div>
                       </div>
-                      <p className="text-sm font-medium mt-1">{order.item}</p>
-                      <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
-                        <MapPin className="h-3 w-3" /> {order.dest}
+                      <div className="text-right min-w-[120px]">
+                        <p className="text-sm font-medium">{handlerName}</p>
+                        <p className="text-xs text-muted-foreground">
+                            {new Date(order.created_at).toLocaleDateString()}
+                        </p>
                       </div>
                     </div>
-                  </div>
-                  <div className="text-right min-w-[120px]">
-                    <p className="text-sm font-medium">{order.rider}</p>
-                    <p className="text-xs text-muted-foreground">{order.time}</p>
-                    {order.status === "Delivered" && (
-                      <p className="text-[10px] text-green-600 font-medium mt-1">POD: {order.pod}</p>
-                    )}
-                  </div>
-                </div>
-              ))}
+                  );
+                })
+              )}
             </div>
-            <Button variant="link" className="w-full mt-4">
-              View All Orders <ArrowRight className="ml-2 h-4 w-4" />
+            <Button variant="link" className="w-full mt-4" asChild>
+              <Link href="/dashboard/sme/orders">
+                View All Orders <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
             </Button>
           </CardContent>
         </Card>

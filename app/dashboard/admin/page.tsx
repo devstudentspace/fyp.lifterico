@@ -5,6 +5,7 @@ import { Users, Package, AlertCircle, TrendingUp, Activity, CheckCircle2, Loader
 import { createClient } from "@/lib/supabase/server";
 import { CompactVerificationList } from "@/components/admin/compact-verification-list";
 import { Suspense } from "react";
+import { QuickLinks } from "@/components/dashboard/quick-links";
 
 async function getPendingVerifications() {
   const supabase = await createClient();
@@ -134,6 +135,8 @@ async function AdminContent() {
           <p className="text-muted-foreground">System performance and user management.</p>
         </div>
       </div>
+
+      <QuickLinks role="admin" />
 
       <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
         <Card>
