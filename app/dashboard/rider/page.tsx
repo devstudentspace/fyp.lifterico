@@ -2,13 +2,14 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/componen
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { MapPin, Navigation, DollarSign, Clock, CheckCircle, Camera, Key, Loader2 } from "lucide-react";
+import { MapPin, Navigation, DollarSign, Clock, CheckCircle, Camera, Key, Loader2, Building2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { calculateProfileCompletion } from "@/lib/profile-utils";
 import { ProfileCompletionGate } from "@/components/profile-completion-gate";
 import { VerificationGate } from "@/components/verification-gate";
 import { RiderStatusToggle } from "./rider-status-toggle";
+import { RiderInviteAlert } from "@/components/rider/rider-invite-alert";
 import { Suspense } from "react";
 
 async function RiderContent() {
@@ -17,7 +18,13 @@ async function RiderContent() {
   if (!user) redirect("/auth/login");
 
   const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single();
-  const { data: riderProfile } = await supabase.from("rider_profiles").select("*").eq("id", user.id).single();
+  
+  // Fetch rider profile with logistics company info if exists
+  const { data: riderProfile } = await supabase
+    .from("rider_profiles")
+    .select("*, logistics_profiles(company_name)")
+    .eq("id", user.id)
+    .single();
 
   const completionPercentage = calculateProfileCompletion('rider', profile, riderProfile);
 
@@ -34,15 +41,30 @@ async function RiderContent() {
   }
 
   const isOnline = riderProfile?.current_status === 'online';
+  // @ts-ignore - Supabase types join handling
+  const companyName = riderProfile?.logistics_profiles?.company_name;
 
   return (
     <div className="flex flex-col gap-6 w-full max-w-lg mx-auto pb-20">
+      
+      <RiderInviteAlert />
+
       <div className="flex justify-between items-center bg-card p-4 rounded-xl border shadow-sm">
         <div>
            <h1 className="text-xl font-bold">{profile?.full_name || "Rider"}</h1>
-           <div className="flex items-center gap-2">
-             <p className="text-sm text-muted-foreground">{riderProfile?.vehicle_type || "No vehicle"} • {riderProfile?.license_plate || "No plate"}</p>
-             <span className={`h-1.5 w-1.5 rounded-full ${isOnline ? 'bg-green-500 animate-pulse' : 'bg-slate-300'}`}></span>
+           <div className="flex flex-col gap-1 mt-1">
+             <div className="flex items-center gap-2">
+                <p className="text-sm text-muted-foreground">{riderProfile?.vehicle_type || "No vehicle"} • {riderProfile?.license_plate || "No plate"}</p>
+                <span className={`h-1.5 w-1.5 rounded-full ${isOnline ? 'bg-green-500 animate-pulse' : 'bg-slate-300'}`}></span>
+             </div>
+             {companyName ? (
+                <div className="flex items-center gap-1 text-xs text-blue-600 font-medium">
+                    <Building2 className="h-3 w-3" />
+                    <span>{companyName}</span>
+                </div>
+             ) : (
+                <Badge variant="outline" className="w-fit text-[10px] h-5">Independent</Badge>
+             )}
            </div>
         </div>
         <div className="flex items-center gap-2">

@@ -5,14 +5,25 @@ import { hasEnvVars } from "@/lib/utils";
 import Link from "next/link";
 import { Suspense } from "react";
 import { Copyright } from "@/components/copyright";
-import { DashboardSidebar } from "@/components/dashboard-sidebar";
+import { RoleSidebar } from "@/components/role-sidebar";
 import { MobileSidebar } from "@/components/mobile-sidebar";
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 
-export default function ProtectedLayout({
+export default async function ProtectedLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return redirect("/auth/login");
+  }
+
+  const role = user.user_metadata?.role || "customer";
+
   return (
     <div className="flex min-h-screen bg-muted/30">
       {/* Desktop Sidebar */}
@@ -23,7 +34,7 @@ export default function ProtectedLayout({
             </Link>
          </div>
          <div className="flex-1 overflow-y-auto">
-            <DashboardSidebar className="px-2" />
+            <RoleSidebar role={role} className="px-2" />
          </div>
       </aside>
 
