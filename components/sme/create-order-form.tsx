@@ -162,13 +162,36 @@ export function CreateOrderForm() {
   };
 
   const nextStep = () => {
-      if (step === 1 && !formData.pickup_address) {
-          setError("Pickup address is required.");
-          return;
+      if (step === 1) {
+          if (!formData.pickup_address) {
+              setError("Pickup address is required.");
+              setUseMyAddress(false);
+              return;
+          }
+          if (!formData.pickup_contact_name) {
+              setError("Pickup contact name is required.");
+              setUseMyAddress(false);
+              return;
+          }
+          if (!formData.pickup_contact_phone) {
+              setError("Pickup contact phone is required.");
+              setUseMyAddress(false);
+              return;
+          }
       }
-      if (step === 2 && !formData.delivery_address) {
-          setError("Delivery address is required.");
-          return;
+      if (step === 2) {
+          if (!formData.delivery_address) {
+              setError("Delivery address is required.");
+              return;
+          }
+          if (!formData.delivery_contact_name) {
+              setError("Recipient name is required.");
+              return;
+          }
+          if (!formData.delivery_contact_phone) {
+              setError("Recipient phone is required.");
+              return;
+          }
       }
       setError(null);
       setStep(s => Math.min(s + 1, 5));

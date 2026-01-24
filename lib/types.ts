@@ -41,6 +41,14 @@ export interface Order {
   
   created_at: string;
   updated_at: string;
+  rider?: {
+    vehicle_type?: string;
+    license_plate?: string;
+    profiles?: {
+      full_name?: string;
+      phone_number?: string;
+    };
+  };
 }
 
 export interface SmeProfile {

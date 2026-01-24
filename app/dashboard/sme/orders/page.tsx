@@ -18,14 +18,21 @@ export default function SmeOrdersPage() {
             <p className="text-muted-foreground">Track and manage your delivery requests.</p>
           </div>
         </div>
-        <Button asChild>
-          <Link href="/dashboard/sme/orders/create">
-            <Plus className="mr-2 h-4 w-4" /> New Order
-          </Link>
-        </Button>
+        <div className="flex gap-2">
+            <Button asChild variant="outline">
+                <Link href="/dashboard/sme/history">
+                    View History
+                </Link>
+            </Button>
+            <Button asChild>
+            <Link href="/dashboard/sme/orders/create">
+                <Plus className="mr-2 h-4 w-4" /> New Order
+            </Link>
+            </Button>
+        </div>
       </div>
 
-      <SmeOrderList />
+      <SmeOrderList type="active" />
     </div>
   );
 }

@@ -100,8 +100,8 @@ export function AvailableOrdersList() {
         <Card key={order.id} className="flex flex-col">
           <CardHeader className="pb-3">
             <div className="flex justify-between items-start">
-              <Badge variant={order.status === 'pending' ? 'secondary' : 'default'} className="mb-2">
-                {order.status.toUpperCase()}
+              <Badge variant="outline" className="mb-2 border-orange-500 text-orange-600">
+                PENDING
               </Badge>
               <span className="text-xs font-mono text-muted-foreground">{order.order_number}</span>
             </div>

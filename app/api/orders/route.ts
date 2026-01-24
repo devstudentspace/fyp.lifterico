@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     // if the schema cache is stale or strict.
     const payload: any = {
       sme_id: user.id,
-      status: json.business_id || json.rider_id ? 'assigned' : 'pending',
+      status: json.rider_id ? 'assigned' : json.business_id ? 'accepted' : 'pending',
       pickup_address: json.pickup_address,
       pickup_lat: json.pickup_lat,
       pickup_lng: json.pickup_lng,
@@ -135,7 +135,7 @@ export async function GET(request: Request) {
       // Try to match by customer_id OR phone number
       const { data: customerOrders, error: customerError } = await adminSupabase
           .from('orders')
-          .select('*')
+          .select('*, rider:rider_profiles!rider_id(vehicle_type, license_plate, profiles(full_name, phone_number))')
           .or(`customer_id.eq.${user.id},delivery_contact_phone.eq.${profile.phone_number}`)
           .order('created_at', { ascending: false });
 
@@ -145,7 +145,7 @@ export async function GET(request: Request) {
           if (customerError.message.includes("customer_id")) {
               const { data: retryData, error: retryError } = await adminSupabase
                   .from('orders')
-                  .select('*')
+                  .select('*, rider:rider_profiles!rider_id(vehicle_type, license_plate, profiles(full_name, phone_number))')
                   .eq('delivery_contact_phone', profile.phone_number)
                   .order('created_at', { ascending: false });
               
@@ -165,7 +165,7 @@ export async function GET(request: Request) {
   
   const { data, error } = await supabase
     .from('orders')
-    .select('*')
+    .select('*, rider:rider_profiles!rider_id(vehicle_type, license_plate, profiles(full_name, phone_number))')
     .order('created_at', { ascending: false });
 
   if (error) {

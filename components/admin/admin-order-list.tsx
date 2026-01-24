@@ -82,7 +82,13 @@ export function AdminOrderList() {
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <span className="font-mono text-sm text-muted-foreground">{order.order_number}</span>
-                        <Badge variant={order.status === 'delivered' ? 'secondary' : order.status === 'cancelled' ? 'destructive' : 'default'}>
+                        <Badge variant="outline" className={
+                          order.status === 'pending' ? "border-orange-500 text-orange-600" : 
+                          order.status === 'accepted' ? "border-purple-500 text-purple-600" : 
+                          order.status === 'assigned' ? "border-blue-500 text-blue-600" : 
+                          order.status === 'in_transit' ? "border-green-500 text-green-600" : 
+                          order.status === 'delivered' ? "border-emerald-500 text-emerald-600" : ""
+                        }>
                           {order.status.replace('_', ' ').toUpperCase()}
                         </Badge>
                       </div>
