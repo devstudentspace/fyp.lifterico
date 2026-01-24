@@ -52,6 +52,10 @@ export async function POST(request: Request) {
       estimated_duration_mins: json.estimated_duration_mins
     };
 
+    if (json.customer_id) {
+        payload.customer_id = json.customer_id;
+    }
+
     if (json.business_id) {
         payload.business_id = json.business_id;
     }
@@ -97,6 +101,8 @@ export async function POST(request: Request) {
   }
 }
 
+import { createAdminClient } from "@/lib/supabase/admin";
+
 export async function GET(request: Request) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -105,7 +111,54 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // RLS policies automatically filter the results:
+  const role = user.user_metadata?.role;
+
+  // Special handling for Customer role (Recipient)
+  if (role === 'customer') {
+      // 1. Get user's phone number from profile
+      const { data: profile } = await supabase
+          .from('profiles')
+          .select('phone_number')
+          .eq('id', user.id)
+          .single();
+
+      if (!profile?.phone_number) {
+          return NextResponse.json([]); // No phone, no orders
+      }
+
+      // 2. Use Admin Client to bypass RLS and find orders for this phone or ID
+      const adminSupabase = createAdminClient();
+      if (!adminSupabase) {
+           return NextResponse.json({ error: "Server Configuration Error" }, { status: 500 });
+      }
+
+      // Try to match by customer_id OR phone number
+      const { data: customerOrders, error: customerError } = await adminSupabase
+          .from('orders')
+          .select('*')
+          .or(`customer_id.eq.${user.id},delivery_contact_phone.eq.${profile.phone_number}`)
+          .order('created_at', { ascending: false });
+
+      if (customerError) {
+          // Fallback: If error is likely due to missing 'customer_id' column (migration not run), 
+          // retry with just phone number.
+          if (customerError.message.includes("customer_id")) {
+              const { data: retryData, error: retryError } = await adminSupabase
+                  .from('orders')
+                  .select('*')
+                  .eq('delivery_contact_phone', profile.phone_number)
+                  .order('created_at', { ascending: false });
+              
+              if (retryError) return NextResponse.json({ error: retryError.message }, { status: 500 });
+              return NextResponse.json(retryData);
+          }
+          return NextResponse.json({ error: customerError.message }, { status: 500 });
+      }
+
+      return NextResponse.json(customerOrders);
+  }
+
+  // RLS policies automatically filter the results for other roles:
   // - SME: Sees only their own orders
   // - Logistics: Sees pending/unassigned OR assigned to them
   // - Admin: Sees all

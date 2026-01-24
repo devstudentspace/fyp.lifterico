@@ -7,11 +7,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Loader2, MapPin, Package, Clock, Truck } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { AcceptanceSuccessModal } from "./acceptance-success-modal";
 
 export function AvailableOrdersList() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [acceptingId, setAcceptingId] = useState<string | null>(null);
+  const [successModalOpen, setSuccessModalOpen] = useState(false);
+  const [acceptedOrderNumber, setAcceptedOrderNumber] = useState<string | undefined>();
   const supabase = createClient();
 
   useEffect(() => {
@@ -35,7 +38,7 @@ export function AvailableOrdersList() {
       const res = await fetch('/api/orders');
       if (res.ok) {
         const data = await res.json();
-        setOrders(data);
+        setOrders(data.filter((o: Order) => o.status === 'pending'));
       }
     } catch (error) {
       console.error("Failed to fetch orders", error);
@@ -45,6 +48,7 @@ export function AvailableOrdersList() {
   }
 
   async function handleAcceptOrder(orderId: string) {
+    const order = orders.find(o => o.id === orderId);
     setAcceptingId(orderId);
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -60,7 +64,8 @@ export function AvailableOrdersList() {
 
       if (error) throw error;
       
-      // Optimistic update or wait for realtime
+      setAcceptedOrderNumber(order?.order_number);
+      setSuccessModalOpen(true);
       fetchOrders();
     } catch (error) {
       console.error("Failed to accept order", error);
@@ -154,6 +159,12 @@ export function AvailableOrdersList() {
           </CardFooter>
         </Card>
       ))}
+      
+      <AcceptanceSuccessModal 
+        isOpen={successModalOpen} 
+        onClose={() => setSuccessModalOpen(false)} 
+        orderNumber={acceptedOrderNumber}
+      />
     </div>
   );
 }

@@ -32,7 +32,7 @@ export function DeliveryList() {
       if (activeTab === 'active') {
         query = query.in('status', ['assigned', 'accepted', 'picked_up', 'in_transit']);
       } else {
-        query = query.eq('status', 'delivered');
+        query = query.in('status', ['delivered', 'cancelled', 'failed']);
       }
 
       const { data, error } = await query;

@@ -27,14 +27,14 @@ This document outlines the phase-by-phase and sprint-by-sprint implementation pl
     *   [x] **Admin:** Build the "Business Verification" view in Admin Dashboard to approve/reject profiles.
     *   [x] **Logic:** Restrict order creation/acceptance to verified accounts only.
 
-### Sprint 3: Order Management Core (In Progress)
+### Sprint 3: Order Management Core (Completed)
 *   **Goal:** The heart of the system—creating and moving orders.
 *   **Tasks:**
-    *   [ ] **Database:** Create `orders` table with status enums (`PENDING`, `ASSIGNED`, `DELIVERED`, etc.).
-    *   [ ] **SME Feature:** "Create Order" form with address inputs and item details.
-    *   [ ] **Logistics Feature:** "Order Pool" view to see available orders.
-    *   [ ] **Logic:** Implement basic state transitions (SME creates -> Logistics accepts -> Rider assigned).
-    *   [ ] **UI:** Order history lists for all dashboards.
+    *   [x] **Database:** Create `orders` table with status enums (`PENDING`, `ASSIGNED`, `DELIVERED`, etc.).
+    *   [x] **SME Feature:** "Create Order" form with address inputs and item details.
+    *   [x] **Logistics Feature:** "Order Pool" view to see available orders.
+    *   [x] **Logic:** Implement basic state transitions (SME creates -> Logistics accepts -> Rider assigned).
+    *   [x] **UI:** Order history lists for all dashboards.
 
 ---
 
@@ -42,20 +42,20 @@ This document outlines the phase-by-phase and sprint-by-sprint implementation pl
 **Goal:** Connect orders to the physical world with riders, fleets, and maps.
 **Modules:** Rider, Tracking (Basic), Map.
 
-### Sprint 4: Fleet & Rider Management
+### Sprint 4: Fleet & Rider Management (Completed)
 *   **Goal:** Allow Logistics companies to manage their workforce.
 *   **Tasks:**
-    *   [ ] **Rider Feature:** Rider onboarding flow (Invite by Logistics or Self-signup).
-    *   [ ] **Logistics Feature:** "My Fleet" dashboard (Add/Remove riders, View status).
-    *   [ ] **Database:** Link `rider_profiles` to `logistics_profiles`.
-    *   [ ] **Validation:** Rider document upload (License, ID).
+    *   [x] **Rider Feature:** Rider onboarding flow (Invite by Logistics or Self-signup).
+    *   [x] **Logistics Feature:** "My Fleet" dashboard (Add/Remove riders, View status).
+    *   [x] **Database:** Link `rider_profiles` to `logistics_profiles`.
+    *   [x] **Validation:** Rider document upload (License, ID).
 
-### Sprint 5: Dispatch & Assignment Logic
+### Sprint 5: Dispatch & Assignment Logic (In Progress)
 *   **Goal:** Efficiently matching orders to riders.
 *   **Tasks:**
     *   [ ] **Manual Assignment:** Logistics admin manually assigns an order to a specific rider.
-    *   [ ] **Rider App:** "New Delivery Request" screen for riders to Accept/Reject.
-    *   [ ] **Status Sync:** Updating order status updates rider availability (Online/Busy).
+    *   [x] **Rider App:** "New Delivery Request" screen for riders to Accept/Reject (Implemented in Dashboard).
+    *   [x] **Status Sync:** Updating order status updates rider availability (Online/Busy).
 
 ### Sprint 6: Map Integration (OpenStreetMap/Leaflet)
 *   **Goal:** Visualizing locations.

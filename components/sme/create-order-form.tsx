@@ -181,6 +181,7 @@ export function CreateOrderForm() {
 
     const payload = {
       ...formData,
+      customer_id: isExistingCustomer && selectedCustomerId !== "none" ? selectedCustomerId : null,
       business_id: partnerType === 'logistics' ? selectedPartnerId : null,
       rider_id: partnerType === 'rider' ? selectedPartnerId : null
     };

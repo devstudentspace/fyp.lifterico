@@ -2,42 +2,34 @@
 
 import { useState, useEffect } from "react";
 import { Order } from "@/lib/types";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, MapPin, Package, Clock, Truck, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { Loader2, MapPin, Clock, Truck, Calendar } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
-export function SmeOrderList() {
+export function LogisticsHistoryList() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const supabase = createClient();
 
   useEffect(() => {
     fetchOrders();
-
-    const channel = supabase
-      .channel('public:orders:sme')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => {
-        fetchOrders();
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
   }, []);
 
   async function fetchOrders() {
     try {
       const res = await fetch('/api/orders');
       if (res.ok) {
-        const data = await res.json();
-        setOrders(data);
+        const data: Order[] = await res.json();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const myOrders = data.filter(o => o.business_id === user.id);
+          // Filter for Completed Orders only
+          setOrders(myOrders.filter(o => ['delivered', 'cancelled', 'failed'].includes(o.status)));
+        }
       }
     } catch (error) {
-      console.error("Failed to fetch orders", error);
+      console.error("Failed to fetch history", error);
     } finally {
       setLoading(false);
     }
@@ -54,16 +46,11 @@ export function SmeOrderList() {
   if (orders.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center p-12 border-2 border-dashed rounded-lg bg-muted/50">
-        <Package className="h-12 w-12 text-muted-foreground mb-4" />
-        <h3 className="text-lg font-medium">No Orders Yet</h3>
-        <p className="text-muted-foreground text-center max-w-sm mt-2 mb-4">
-          You haven't created any delivery orders yet.
+        <Clock className="h-12 w-12 text-muted-foreground mb-4" />
+        <h3 className="text-lg font-medium">No History Found</h3>
+        <p className="text-muted-foreground text-center max-w-sm mt-2">
+          You haven't completed any deliveries yet.
         </p>
-        <Button asChild>
-          <Link href="/dashboard/sme/orders/create">
-            <Plus className="mr-2 h-4 w-4" /> Create First Order
-          </Link>
-        </Button>
       </div>
     );
   }
@@ -71,34 +58,25 @@ export function SmeOrderList() {
   return (
     <div className="space-y-4">
       {orders.map((order) => (
-        <Card key={order.id} className="hover:bg-accent/5 transition-colors">
+        <Card key={order.id} className="opacity-80 hover:opacity-100 transition-opacity">
           <CardContent className="p-6">
             <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
                   <span className="font-mono text-sm text-muted-foreground">{order.order_number}</span>
-                  <Badge variant={
-                    order.status === 'delivered' ? 'default' : 
-                    order.status === 'pending' ? 'secondary' : 
-                    order.status === 'accepted' ? 'outline' : 'outline'
-                  } className={order.status === 'accepted' ? "border-blue-500 text-blue-600" : ""}>
-                    {order.status === 'accepted' ? 'Accepted by Logistics' : 
-                     order.status === 'assigned' ? 'Rider Assigned' :
-                     order.status.toUpperCase()}
+                  <Badge variant={order.status === 'delivered' ? 'default' : 'destructive'}>
+                    {order.status.toUpperCase()}
                   </Badge>
-                  {order.status === 'accepted' && (
-                      <span className="text-[10px] text-muted-foreground animate-pulse">
-                          (Awaiting Rider Assignment)
-                      </span>
-                  )}
                 </div>
                 <h3 className="font-semibold text-lg flex items-center gap-2">
                   {order.package_size.toUpperCase()} Package
-                  <span className="text-muted-foreground text-sm font-normal">- {order.package_description}</span>
                 </h3>
+                <p className="text-sm text-muted-foreground">
+                    Fee: ₦{order.delivery_fee?.toLocaleString()}
+                </p>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-6 text-sm">
+              <div className="flex flex-col sm:flex-row gap-6 text-sm items-center">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <MapPin className="h-3 w-3 text-green-600" /> Pickup
@@ -111,11 +89,12 @@ export function SmeOrderList() {
                   </div>
                   <p className="font-medium max-w-[200px] truncate">{order.delivery_address}</p>
                 </div>
-                <div className="space-y-1 text-right">
+                
+                <div className="space-y-1 text-right min-w-[120px]">
                   <div className="flex items-center justify-end gap-2 text-muted-foreground">
-                    <Clock className="h-3 w-3" /> Created
+                    <Calendar className="h-3 w-3" /> Completed
                   </div>
-                  <p className="font-medium">{new Date(order.created_at).toLocaleDateString()}</p>
+                  <p className="font-medium">{new Date(order.updated_at).toLocaleDateString()}</p>
                 </div>
               </div>
             </div>
