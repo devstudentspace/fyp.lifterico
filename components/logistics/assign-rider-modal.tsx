@@ -52,7 +52,10 @@ export function AssignRiderModal({ isOpen, onClose, orderId, onAssignmentSuccess
           current_status,
           vehicle_type,
           license_plate,
+          license_number,
           logistics_id,
+          created_at,
+          updated_at,
           profiles:profiles (full_name, phone_number)
         `)
         .eq('current_status', 'online') // Only show online riders
@@ -87,7 +90,7 @@ export function AssignRiderModal({ isOpen, onClose, orderId, onAssignmentSuccess
       // Update the order with the selected rider ID
       const { error } = await supabase
         .from('orders')
-        .update({ 
+        .update({
           rider_id: selectedRiderId,
           status: 'assigned' // Change status to assigned once rider is assigned
         })
@@ -100,13 +103,13 @@ export function AssignRiderModal({ isOpen, onClose, orderId, onAssignmentSuccess
 
       // Show success animation
       setShowSuccess(true);
-      
+
       // Delay closing to let animation play
       setTimeout(() => {
         setShowSuccess(false);
         onAssignmentSuccess();
       }, 2000);
-      
+
     } catch (error) {
       console.error("Error assigning rider:", error);
     } finally {
@@ -139,7 +142,7 @@ export function AssignRiderModal({ isOpen, onClose, orderId, onAssignmentSuccess
               >
                 <CheckCircle2 className="w-10 h-10 text-green-600" />
               </motion.div>
-              <motion.h2 
+              <motion.h2
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
@@ -147,7 +150,7 @@ export function AssignRiderModal({ isOpen, onClose, orderId, onAssignmentSuccess
               >
                 Rider Assigned!
               </motion.h2>
-              <motion.p 
+              <motion.p
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
@@ -165,7 +168,7 @@ export function AssignRiderModal({ isOpen, onClose, orderId, onAssignmentSuccess
               <DialogHeader>
                 <DialogTitle>Assign Rider to Order</DialogTitle>
               </DialogHeader>
-              
+
               {loading ? (
                 <div className="py-8 flex justify-center">
                   <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
@@ -197,18 +200,18 @@ export function AssignRiderModal({ isOpen, onClose, orderId, onAssignmentSuccess
                   </div>
                 </div>
               )}
-              
+
               <DialogFooter>
-                <Button 
-                  type="button" 
-                  variant="outline" 
+                <Button
+                  type="button"
+                  variant="outline"
                   onClick={handleClose}
                   disabled={assigning}
                 >
                   Cancel
                 </Button>
-                <Button 
-                  type="button" 
+                <Button
+                  type="button"
                   onClick={handleAssignRider}
                   disabled={!selectedRiderId || assigning}
                 >

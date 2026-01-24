@@ -90,4 +90,8 @@ export interface Rider {
   phone_number?: string;
   created_at: string;
   updated_at: string;
+  profiles?: {
+    full_name?: string;
+    phone_number?: string;
+  }[];
 }
