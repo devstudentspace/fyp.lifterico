@@ -26,6 +26,7 @@ export function QuickLinks({ role }: QuickLinksProps) {
         return [
           { href: "/dashboard/admin/verifications", label: "Verify Businesses", icon: ShieldCheck, color: "text-orange-500", bg: "bg-orange-100" },
           { href: "/dashboard/admin/users", label: "Manage Users", icon: Users, color: "text-blue-500", bg: "bg-blue-100" },
+          { href: "/dashboard/admin/orders", label: "All Orders", icon: Truck, color: "text-purple-500", bg: "bg-purple-100" },
           { href: "/dashboard/settings", label: "System Settings", icon: Settings, color: "text-gray-500", bg: "bg-gray-100" },
         ];
       case 'sme':

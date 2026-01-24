@@ -32,7 +32,7 @@ export function DeliveryList() {
       if (activeTab === 'active') {
         query = query.in('status', ['assigned', 'accepted', 'picked_up', 'in_transit']);
       } else {
-        query = query.eq('status', 'delivered');
+        query = query.in('status', ['delivered', 'cancelled', 'failed']);
       }
 
       const { data, error } = await query;
@@ -92,7 +92,12 @@ export function DeliveryList() {
                     <div className="space-y-4 flex-1">
                       <div className="flex items-center justify-between">
                         <Badge variant="outline" className="font-mono">{order.order_number}</Badge>
-                        <Badge className={activeTab === 'active' ? "bg-blue-600" : "bg-green-600"}>
+                        <Badge variant="outline" className={
+                          order.status === 'assigned' ? "border-blue-500 text-blue-600" : 
+                          order.status === 'picked_up' ? "border-blue-400 text-blue-500" :
+                          order.status === 'in_transit' ? "border-green-500 text-green-600" : 
+                          order.status === 'delivered' ? "border-emerald-500 text-emerald-600" : ""
+                        }>
                             {order.status.replace('_', ' ').toUpperCase()}
                         </Badge>
                       </div>

@@ -18,11 +18,18 @@ export default function LogisticsOrdersPage() {
             <p className="text-muted-foreground">Manage orders you have accepted.</p>
           </div>
         </div>
-        <Button asChild>
-          <Link href="/dashboard/logistics/orders/available">
-            <Search className="mr-2 h-4 w-4" /> Find More Orders
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button asChild variant="outline">
+            <Link href="/dashboard/logistics/orders/history">
+              View History
+            </Link>
+          </Button>
+          <Button asChild>
+            <Link href="/dashboard/logistics/orders/available">
+              <Search className="mr-2 h-4 w-4" /> Find More Orders
+            </Link>
+          </Button>
+        </div>
       </div>
 
       <LogisticsOrderList />

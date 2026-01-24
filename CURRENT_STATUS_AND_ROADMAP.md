@@ -2,25 +2,38 @@
 
 ## Current State Analysis
 
-The project is currently starting **Sprint 3 (Order Management Core)** of Phase 1.
+The project has completed **Phase 1** and **Phase 2 (Logistics Operations)**.
+Sprint 3 (Order Management) through Sprint 5 (Dispatch Logic) are effectively **Complete**.
+The focus is now on **Sprint 6 (Map Integration)**.
 
-*   **Authentication:** Fully implemented with Sign Up/Login and role assignment.
-*   **Database:** Role-based profiles are set up and integrated with the UI.
-*   **Profile Management:** Real-time data fetching and updating is implemented via the `/settings` page.
-*   **Access Control:** A **Profile Completion Gate (70%)** is active, protecting dashboards for SME, Logistics, and Rider roles.
-*   **Business Verification:** Admins can view uploaded documents, approve accounts, or reject them with a reason.
-*   **Dashboards:** Role-specific dashboards now fetch real user/business data from Supabase.
-*   **Security:** RBAC Middleware enforces role-specific route access.
+*   **Authentication & Profiles:** ✅ Done.
+*   **Order Management:** ✅ Done. SMEs can create orders, and Logistics companies can accept them.
+*   **Fleet Management:** ✅ Done. Logistics can manage riders and track status.
+*   **Rider App:** ✅ Done. Riders can accept jobs and update delivery status.
 
-#### Sprint 2: Profiles & Business Verification (Completed)
-*   **Goal:** Establish trust and identity.
+#### Sprint 3: Order Management Core (Completed)
 *   **Status:** ✅ **DONE**
 *   **Deliverables:**
-    *   [x] API/DB integration for profile data.
-    *   [x] "Edit Profile" forms for all roles.
-    *   [x] Profile Completion Gate (70% logic).
-    *   [x] Document upload (Storage) for verification.
-    *   [x] Admin "Upgrade Requests" logic (Approve/Reject with reason).
+    *   [x] **DB:** `orders` table created.
+    *   [x] **SME:** "Create Order" wizard active.
+    *   [x] **Logistics:** "Available Orders" pool implemented.
+    *   [x] **Rider:** "My Jobs" list implemented.
+
+#### Sprint 4: Fleet & Rider Management (Completed)
+*   **Status:** ✅ **DONE**
+*   **Deliverables:**
+    *   [x] **Feature:** "Add Rider" invite system.
+    *   [x] **DB:** `rider_profiles` linked to `logistics_profiles`.
+    *   [x] **UI:** "My Fleet" dashboard.
+    *   [x] **Rider:** Invite acceptance flow.
+
+#### Sprint 5: Dispatch & Assignment Logic (Completed)
+*   **Status:** ✅ **DONE**
+*   **Deliverables:**
+    *   [x] **Logic:** Manual Assignment Modal for Logistics Admins.
+    *   [x] **UI:** Animated success feedback for order operations.
+    *   [x] **Feature:** Rider contact details (Phone/Call) integrated for SMEs and Customers.
+    *   [x] **Rider App:** "New Job" notification logic.
 
 ## Implementation Roadmap
 
@@ -30,54 +43,23 @@ This roadmap compares the current state with the requirements and outlines the r
 
 ### Phase 1: Core Foundation & Order Management (MVP)
 
-#### Sprint 1: Foundation & Authentication (Completed)
-*   **Goal:** Secure system access and role-based environment.
+#### Sprint 1 & 2 (Foundation, Auth, Profiles)
 *   **Status:** ✅ **DONE**
-*   **Deliverables:**
-    *   Next.js + Supabase setup.
-    *   Auth flow (Sign up/Login) with Role selection.
-    *   RBAC Middleware (Redirects users to correct dashboard).
-    *   Static UI Dashboards for all 5 roles.
 
-#### Sprint 2: Profiles & Business Verification (Completed)
-*   **Goal:** Establish trust and identity.
+#### Sprint 3: Order Management Core
 *   **Status:** ✅ **DONE**
-*   **Deliverables:**
-    *   [x] **API/DB:** Create API routes to fetch/update profile data from Supabase.
-    *   [x] **UI:** "Edit Profile" forms for SMEs and Logistics.
-    *   [x] **Feature:** Document upload (Storage) for verification.
-    *   [x] **Admin:** Real "Upgrade Requests" logic in Admin dashboard.
-
-#### Sprint 3: Order Management Core (Current Focus)
-*   **Goal:** The heart of the system—creating and moving orders.
-*   **Expected Outcome:** SMEs can create orders that Logistics companies can see.
-*   **Key Tasks:**
-    *   [ ] **DB:** Create `orders` table (Pickup/Dropoff coords, price, status, Sender/Receiver info).
-    *   [ ] **SME:** "New Order" wizard (Step 1: Details, Step 2: Address).
-    *   [ ] **Logistics:** "Available Orders" list fetching from DB.
-    *   [ ] **Rider:** "My Jobs" list.
-*   **Success Metric:** An order created by an SME appears in the Logistics dashboard database query.
 
 ---
 
 ### Phase 2: Logistics Operations & Mapping
 
 #### Sprint 4: Fleet & Rider Management
-*   **Goal:** Allow Logistics companies to manage their workforce.
-*   **Expected Outcome:** Logistics companies can onboard riders and see them in their fleet.
-*   **Key Tasks:**
-    *   [ ] **Feature:** "Add Rider" invite system (email link or direct add).
-    *   [ ] **DB:** Associate `rider_profiles` with `logistics_id`.
-    *   [ ] **UI:** "My Fleet" page for Logistics users.
+*   **Status:** ✅ **DONE**
 
 #### Sprint 5: Dispatch & Assignment Logic
-*   **Goal:** Efficiently matching orders to riders.
-*   **Expected Outcome:** A Logistics manager can assign a specific order to a specific rider.
-*   **Key Tasks:**
-    *   [ ] **Logic:** Assignment state transition (`PENDING` -> `ASSIGNED`).
-    *   [ ] **Rider App:** "New Job" notification/modal for the assigned rider.
+*   **Status:** ✅ **DONE**
 
-#### Sprint 6: Map Integration
+#### Sprint 6: Map Integration (Next Focus)
 *   **Goal:** Visualizing locations.
 *   **Expected Outcome:** Users can see order locations on a map.
 *   **Key Tasks:**

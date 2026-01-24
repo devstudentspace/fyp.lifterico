@@ -41,6 +41,14 @@ export interface Order {
   
   created_at: string;
   updated_at: string;
+  rider?: {
+    vehicle_type?: string;
+    license_plate?: string;
+    profiles?: {
+      full_name?: string;
+      phone_number?: string;
+    };
+  };
 }
 
 export interface SmeProfile {
@@ -67,6 +75,19 @@ export interface LogisticsProfile {
   city?: string;
   state?: string;
   documents?: string[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Rider {
+  id: string;
+  name?: string;
+  vehicle_type?: string;
+  license_plate?: string;
+  license_number?: string;
+  current_status?: 'offline' | 'online' | 'busy';
+  logistics_id?: string | null;
+  phone_number?: string;
   created_at: string;
   updated_at: string;
 }

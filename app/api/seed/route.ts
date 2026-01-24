@@ -26,32 +26,32 @@ export async function GET() {
   // --- 1. Define Expanded Kano-Localized Test Data ---
   const users = [
     // Admin
-    { email: "admin@lifterico.com", password: "password123", role: "admin", name: "System Admin" },
-    
+    { email: "admin@lifterico.com", password: "password", role: "admin", name: "System Admin" },
+
     // Logistics Companies
-    { email: "logistics@kanoexpress.com", password: "password123", role: "logistics", name: "Al-Amin", company: "Kano Express Logistics", address: "No. 55 Zoo Road, Kano", city: "Kano", state: "Kano", reg_no: "RC-KNO-1122", fleet: 15 },
-    { email: "ops@arewadelivery.com", password: "password123", role: "logistics", name: "Yakubu", company: "Arewa Last Mile", address: "Plot 12, Zaria Road, Gyadi-Gyadi", city: "Kano", state: "Kano", reg_no: "RC-ARE-9988", fleet: 8 },
-    { email: "info@nasarawalogistics.com", password: "password123", role: "logistics", name: "Sani Abacha", company: "Nasarawa Rapid Drop", address: "No. 5 Audu Bako Way, Nasarawa GRA", city: "Kano", state: "Kano", reg_no: "RC-NAS-7766", fleet: 5 },
+    { email: "logistics@kanoexpress.com", password: "password", role: "logistics", name: "Al-Amin", company: "Kano Express Logistics", address: "No. 55 Zoo Road, Kano", city: "Kano", state: "Kano", reg_no: "RC-KNO-1122", fleet: 15 },
+    { email: "ops@arewadelivery.com", password: "password", role: "logistics", name: "Yakubu", company: "Arewa Last Mile", address: "Plot 12, Zaria Road, Gyadi-Gyadi", city: "Kano", state: "Kano", reg_no: "RC-ARE-9988", fleet: 8 },
+    { email: "info@nasarawalogistics.com", password: "password", role: "logistics", name: "Sani Abacha", company: "Nasarawa Rapid Drop", address: "No. 5 Audu Bako Way, Nasarawa GRA", city: "Kano", state: "Kano", reg_no: "RC-NAS-7766", fleet: 5 },
 
     // SMEs
-    { email: "sales@sahadkitchen.com", password: "password123", role: "sme", name: "Hajiya Fatima", business: "Fati's Kitchen", address: "Shop 4, Ado Bayero Mall", city: "Kano", state: "Kano", industry: "Food & Beverage" },
-    { email: "info@kwari.textiles.com", password: "password123", role: "sme", name: "Alhaji Musa", business: "Kwari Textile Hub", address: "Kwari Market, Kano Municipal", city: "Kano", state: "Kano", industry: "Textiles" },
-    { email: "shop@kantinkwari.com", password: "password123", role: "sme", name: "Bashir Dandago", business: "Dandago Electronics", address: "Beirut Road, Kano", city: "Kano", state: "Kano", industry: "Electronics" },
-    { email: "orders@sabongari.pharmacy.com", password: "password123", role: "sme", name: "Dr. Chioma", business: "City Care Pharmacy", address: "France Road, Sabon Gari", city: "Kano", state: "Kano", industry: "Healthcare" },
+    { email: "sales@sahadkitchen.com", password: "password", role: "sme", name: "Hajiya Fatima", business: "Fati's Kitchen", address: "Shop 4, Ado Bayero Mall", city: "Kano", state: "Kano", industry: "Food & Beverage" },
+    { email: "info@kwari.textiles.com", password: "password", role: "sme", name: "Alhaji Musa", business: "Kwari Textile Hub", address: "Kwari Market, Kano Municipal", city: "Kano", state: "Kano", industry: "Textiles" },
+    { email: "shop@kantinkwari.com", password: "password", role: "sme", name: "Bashir Dandago", business: "Dandago Electronics", address: "Beirut Road, Kano", city: "Kano", state: "Kano", industry: "Electronics" },
+    { email: "orders@sabongari.pharmacy.com", password: "password", role: "sme", name: "Dr. Chioma", business: "City Care Pharmacy", address: "France Road, Sabon Gari", city: "Kano", state: "Kano", industry: "Healthcare" },
 
     // Riders
-    { email: "rider1@gmail.com", password: "password123", role: "rider", name: "Ibrahim Sani", vehicle: "Motorcycle", plate: "KNO-123-AA", phone: "08031234567" },
-    { email: "rider2@gmail.com", password: "password123", role: "rider", name: "Emeka Okonkwo", vehicle: "Van", plate: "ABJ-456-XY", phone: "08099887766" },
-    { email: "rider3@gmail.com", password: "password123", role: "rider", name: "Usman Bello", vehicle: "Bicycle", plate: "N/A", phone: "07055443322" },
-    { email: "rider4@gmail.com", password: "password123", role: "rider", name: "Aliyu Yusuf", vehicle: "Motorcycle", plate: "KNO-889-BB", phone: "08122334455" },
-    { email: "rider5@gmail.com", password: "password123", role: "rider", name: "John Danjuma", vehicle: "Motorcycle", plate: "KNO-777-CC", phone: "09011223344" },
-    { email: "rider6@gmail.com", password: "password123", role: "rider", name: "Mustapha Gombe", vehicle: "Van", plate: "BAU-555-DD", phone: "07088990011" },
+    { email: "rider1@gmail.com", password: "password", role: "rider", name: "Ibrahim Sani", vehicle: "Motorcycle", plate: "KNO-123-AA", phone: "08031234567" },
+    { email: "rider2@gmail.com", password: "password", role: "rider", name: "Emeka Okonkwo", vehicle: "Van", plate: "ABJ-456-XY", phone: "08099887766" },
+    { email: "rider3@gmail.com", password: "password", role: "rider", name: "Usman Bello", vehicle: "Bicycle", plate: "N/A", phone: "07055443322" },
+    { email: "rider4@gmail.com", password: "password", role: "rider", name: "Aliyu Yusuf", vehicle: "Motorcycle", plate: "KNO-889-BB", phone: "08122334455" },
+    { email: "rider5@gmail.com", password: "password", role: "rider", name: "John Danjuma", vehicle: "Motorcycle", plate: "KNO-777-CC", phone: "09011223344" },
+    { email: "rider6@gmail.com", password: "password", role: "rider", name: "Mustapha Gombe", vehicle: "Van", plate: "BAU-555-DD", phone: "07088990011" },
 
     // Customers
-    { email: "cust1@gmail.com", password: "password123", role: "customer", name: "Zainab Abba", phone: "08123456789" },
-    { email: "cust2@gmail.com", password: "password123", role: "customer", name: "Kabiru Gaya", phone: "09087654321" },
-    { email: "cust3@gmail.com", password: "password123", role: "customer", name: "Aisha Mohammed", phone: "08055667788" },
-    { email: "cust4@gmail.com", password: "password123", role: "customer", name: "Chinedu Eze", phone: "07033445566" },
+    { email: "cust1@gmail.com", password: "password", role: "customer", name: "Zainab Abba", phone: "08123456789" },
+    { email: "cust2@gmail.com", password: "password", role: "customer", name: "Kabiru Gaya", phone: "09087654321" },
+    { email: "cust3@gmail.com", password: "password", role: "customer", name: "Aisha Mohammed", phone: "08055667788" },
+    { email: "cust4@gmail.com", password: "password", role: "customer", name: "Chinedu Eze", phone: "07033445566" },
   ];
 
   const results = [];
